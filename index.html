@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Lógica</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a2525; /* Azul-marinho escuro para o fundo */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .calculator {
+      background: #2c3e50; /* Navy blue como base */
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border: 1px solid #34495e; /* Borda sutil em tom mais claro */
+      width: 360px;
+    }
+    .display {
+      background: #1c2526; /* Tom ainda mais escuro para o display */
+      color: #bdc3c7; /* Cinza claro para o texto */
+      font-size: 1.5rem;
+      padding: 15px;
+      text-align: right;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      white-space: nowrap;
+      border: 1px solid #34495e;
+    }
+    .valores {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: #bdc3c7; /* Cinza claro para os labels */
+    }
+    .valor-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    select {
+      padding: 5px;
+      font-size: 1rem;
+      border-radius: 5px;
+      background: #34495e; /* Tom navy blue para seletores */
+      color: #ecf0f1; /* Texto claro */
+      border: none;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      padding: 15px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      background: #34495e; /* Navy blue para botões normais */
+      color: #ecf0f1; /* Texto claro */
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #4e6a87; /* Tom um pouco mais claro no hover */
+    }
+    .operator {
+      background: #5d829c; /* Azul médio para operadores */
+      color: #ecf0f1;
+    }
+    .operator:hover {
+      background: #6d9ac1; /* Azul mais claro no hover */
+    }
+    .clear {
+      background: #7f8c8d; /* Cinza escuro para limpar */
+      color: #ecf0f1;
+    }
+    .clear:hover {
+      background: #95a5a6; /* Cinza mais claro no hover */
+    }
+    .equals {
+      background: #2ecc71; /* Verde escuro para o igual (mantido para destaque) */
+      color: #ecf0f1;
+    }
+    .equals:hover {
+      background: #27ae60; /* Verde mais escuro no hover */
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display" id="display"></div>
+    <div class="valores" id="valores"></div>
+    <div class="buttons">
+      <button class="clear" onclick="limpar()">C</button>
+      <button onclick="adicionar('(')">(</button>
+      <button onclick="adicionar(')')">)</button>
+      <button class="operator" onclick="adicionar('∼')">∼</button>
+      <button onclick="adicionar('P')">P</button>
+      <button onclick="adicionar('Q')">Q</button>
+      <button onclick="adicionar('R')">R</button>
+      <button class="operator" onclick="adicionar('^')">^</button>
+      <button onclick="adicionar('A')">A</button>
+      <button onclick="adicionar('B')">B</button>
+      <button onclick="adicionar('C')">C</button>
+      <button class="operator" onclick="adicionar('v')">v</button>
+      <button onclick="adicionar('S')">S</button>
+      <button onclick="adicionar('T')">T</button>
+      <button class="operator" onclick="adicionar('→')">→</button>
+      <button class="operator" onclick="adicionar('↔')">↔</button>
+      <button class="equals" onclick="calcular()">=</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let expressao = "";
+
+    // Adiciona um símbolo à expressão
+    function adicionar(valor) {
+      expressao += valor;
+      atualizarInterface();
+    }
+
+    // Limpa a expressão e a interface
+    function limpar() {
+      expressao = "";
+      atualizarInterface();
+    }
+
+    // Atualiza o display e os seletores de valores
+    function atualizarInterface() {
+      const display = document.getElementById("display");
+      const valoresDiv = document.getElementById("valores");
+      
+      // Atualiza o display
+      display.textContent = expressao || " ";
+
+      // Atualiza os seletores de valores
+      valoresDiv.innerHTML = "";
+      const proposicoes = new Set();
+      for (let char of expressao) {
+        if (/[A-Z]/.test(char)) proposicoes.add(char);
+      }
+
+      proposicoes.forEach(prop => {
+        const div = document.createElement("div");
+        div.className = "valor-item";
+        div.innerHTML = `
+          <label>${prop}:</label>
+          <select data-prop="${prop}">
+            <option value="true">V</option>
+            <option value="false">F</option>
+          </select>
+        `;
+        valoresDiv.appendChild(div);
+      });
+    }
+
+    // Calcula o resultado da fórmula
+    function calcular() {
+      const valores = {};
+      const selects = document.querySelectorAll("#valores select");
+      selects.forEach(select => {
+        valores[select.dataset.prop] = select.value === "true";
+      });
+
+      const resultado = calcularFormula(expressao, valores);
+      const display = document.getElementById("display");
+      if (resultado.erro) {
+        display.textContent = resultado.erro;
+      } else {
+        display.textContent = `${expressao} = ${resultado.resultado}`;
+      }
+    }
+
+    // Inicializa a interface
+    atualizarInterface();
+  </script>
+</body>
+</html>
