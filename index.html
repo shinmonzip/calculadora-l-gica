@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #1a2525; /* Azul-marinho escuro para o fundo */
+      background: #1a2525;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -15,16 +15,16 @@
       margin: 0;
     }
     .calculator {
-      background: #2c3e50; /* Navy blue como base */
+      background: #2c3e50;
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      border: 1px solid #34495e; /* Borda sutil em tom mais claro */
+      border: 1px solid #34495e;
       width: 360px;
     }
     .display {
-      background: #1c2526; /* Tom ainda mais escuro para o display */
-      color: #bdc3c7; /* Cinza claro para o texto */
+      background: #1c2526;
+      color: #bdc3c7;
       font-size: 1.5rem;
       padding: 15px;
       text-align: right;
@@ -39,7 +39,7 @@
       flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 20px;
-      color: #bdc3c7; /* Cinza claro para os labels */
+      color: #bdc3c7;
     }
     .valor-item {
       display: flex;
@@ -50,8 +50,8 @@
       padding: 5px;
       font-size: 1rem;
       border-radius: 5px;
-      background: #34495e; /* Tom navy blue para seletores */
-      color: #ecf0f1; /* Texto claro */
+      background: #34495e;
+      color: #ecf0f1;
       border: none;
     }
     .buttons {
@@ -64,34 +64,41 @@
       font-size: 1.2rem;
       border: none;
       border-radius: 10px;
-      background: #34495e; /* Navy blue para botões normais */
-      color: #ecf0f1; /* Texto claro */
+      background: #34495e;
+      color: #ecf0f1;
       cursor: pointer;
       transition: background 0.3s;
     }
     button:hover {
-      background: #4e6a87; /* Tom um pouco mais claro no hover */
+      background: #4e6a87;
     }
     .operator {
-      background: #5d829c; /* Azul médio para operadores */
+      background: #5d829c;
       color: #ecf0f1;
     }
     .operator:hover {
-      background: #6d9ac1; /* Azul mais claro no hover */
+      background: #6d9ac1;
     }
     .clear {
-      background: #7f8c8d; /* Cinza escuro para limpar */
+      background: #7f8c8d;
       color: #ecf0f1;
     }
     .clear:hover {
-      background: #95a5a6; /* Cinza mais claro no hover */
+      background: #95a5a6;
+    }
+    .delete {
+      background: #e62222; /* Vermelho escuro para o delete */
+      color: #ecf0f1;
+    }
+    .delete:hover {
+      background: #a90000; /* Vermelho mais escuro no hover */
     }
     .equals {
-      background: #2ecc71; /* Verde escuro para o igual (mantido para destaque) */
+      background: #2ecc71;
       color: #ecf0f1;
     }
     .equals:hover {
-      background: #27ae60; /* Verde mais escuro no hover */
+      background: #27ae60;
     }
   </style>
 </head>
@@ -101,19 +108,20 @@
     <div class="valores" id="valores"></div>
     <div class="buttons">
       <button class="clear" onclick="limpar()">C</button>
+      <button class="delete" onclick="deletar()">DEL</button>
       <button onclick="adicionar('(')">(</button>
       <button onclick="adicionar(')')">)</button>
-      <button class="operator" onclick="adicionar('∼')">∼</button>
       <button onclick="adicionar('P')">P</button>
       <button onclick="adicionar('Q')">Q</button>
       <button onclick="adicionar('R')">R</button>
-      <button class="operator" onclick="adicionar('^')">^</button>
+      <button class="operator" onclick="adicionar('∼')">∼</button>
       <button onclick="adicionar('A')">A</button>
       <button onclick="adicionar('B')">B</button>
       <button onclick="adicionar('C')">C</button>
-      <button class="operator" onclick="adicionar('v')">v</button>
+      <button class="operator" onclick="adicionar('^')">^</button>
       <button onclick="adicionar('S')">S</button>
       <button onclick="adicionar('T')">T</button>
+      <button class="operator" onclick="adicionar('v')">v</button>
       <button class="operator" onclick="adicionar('→')">→</button>
       <button class="operator" onclick="adicionar('↔')">↔</button>
       <button class="equals" onclick="calcular()">=</button>
@@ -130,9 +138,15 @@
       atualizarInterface();
     }
 
-    // Limpa a expressão e a interface
+    // Limpa toda a expressão
     function limpar() {
       expressao = "";
+      atualizarInterface();
+    }
+
+    // Remove o último caractere da expressão
+    function deletar() {
+      expressao = expressao.slice(0, -1);
       atualizarInterface();
     }
 
